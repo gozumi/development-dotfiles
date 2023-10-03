@@ -1,0 +1,57 @@
+- hosts: localhost
+
+  tasks:
+    - set_fact:
+        home_dir: "{{ lookup('env', 'HOME') }}"
+        user: "{{ lookup('env', 'USER') }}"
+
+    - name: Update packages
+      become: yes
+      ansible.builtin.apt:
+        update_cache: "yes"
+        upgrade: "yes"
+        state: latest
+
+    - name: Install packages
+      become: yes
+      ansible.builtin.apt:
+        name:
+          - bat
+          - zsh
+          - vim
+          - cmake
+          - gcc-arm-none-eabi
+          - libnewlib-arm-none-eabi
+          - build-essential
+
+    - name: git clone dot files
+      ansible.builtin.git:
+        repo: https://github.com/gozumi/dotfiles.git
+        dest: "{{home_dir}}/git-downloads/dotfiles"
+        version: main
+
+    - name: Create a symbolic link to the .zshrc file
+      ansible.builtin.file:
+        src: "{{home_dir}}/git-downloads/dotfiles/.zshrc"
+        dest: "{{home_dir}}/.zshrc"
+        state: link
+
+    - name: Create a symbolic link to the git-prompt.sh file
+      ansible.builtin.file:
+        src: "{{home_dir}}/git-downloads/dotfiles/git-prompt.sh"
+        dest: "{{home_dir}}/git-prompt.sh"
+        state: link
+
+    - name: Make zsh the default shell
+      user: "name={{user}} shell=/usr/bin/zsh"
+      become: yes
+
+    - name: Download the rust installation script
+      ansible.builtin.get_url:
+        url: https://sh.rustup.rs
+        dest: "{{home_dir}}/git-downloads/sh.rustup.rs"
+        mode: "0750"
+        force: true
+
+    - name: Install rust
+      ansible.builtin.shell: "{{home_dir}}/git-downloads/sh.rustup.rs -y"
