@@ -35,6 +35,7 @@
         src: "{{home_dir}}/git-downloads/dotfiles/.zshrc"
         dest: "{{home_dir}}/.zshrc"
         state: link
+        force: true
 
     - name: Create a symbolic link to the git-prompt.sh file
       ansible.builtin.file:
@@ -55,3 +56,6 @@
 
     - name: Install rust
       ansible.builtin.shell: "{{home_dir}}/git-downloads/sh.rustup.rs -y"
+
+    - name: Give a notification that the script is done
+      ansible.builtin.shell: echo "Ansible setup is done! Woohoo!"
