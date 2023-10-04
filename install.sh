@@ -1,5 +1,5 @@
 #!/bin/bash
 
-sudo apt install ansible -y
+sudo apt-get install ansible -y
 
 ansible-playbook ~/development-vm/bootstrap.yml
