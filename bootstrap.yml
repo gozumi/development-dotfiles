@@ -3,7 +3,6 @@
   tasks:
     - set_fact:
         home_dir: "{{ lookup('env', 'HOME') }}"
-        user: "{{ lookup('env', 'USER') }}"
 
     - name: Update packages
       become: yes
@@ -44,7 +43,7 @@
         state: link
 
     - name: Make zsh the default shell
-      user: "name={{user}} shell=/usr/bin/zsh"
+      user: "name={{ ansible_user_id }} shell=/usr/bin/zsh"
       become: yes
 
     - name: Download the rust installation script
