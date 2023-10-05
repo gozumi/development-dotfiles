@@ -1,5 +1,8 @@
 #!/bin/bash
 
-TZ=Europe/London DEBIAN_FRONTEND=noninteractive sudo apt-get install ansible -y
+
+sudo apt-get install python3 pip3 -y
+
+pip3 install ansible
 
 ansible-playbook ~/development-vm/bootstrap.yml
