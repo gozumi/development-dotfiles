@@ -1,8 +1,5 @@
 #!/bin/bash
 
-
-sudo apt-get install python3 pip3 -y
-
-pip3 install ansible
+sudo apt-get ansible -y
 
 ansible-playbook ~/development-vm/bootstrap.yml
