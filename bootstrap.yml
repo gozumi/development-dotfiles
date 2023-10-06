@@ -21,12 +21,18 @@
           - cmake
           - build-essential
 
+    - name: Allow the current user to sudo without a password
+      become: yes
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: "{{ ansible_user_id }} ALL=(ALL) NOPASSWD:ALL"
+        
     - name: Add the / shared mount to the wsl.conf file
+      become: yes
       ansible.builtin.lineinfile:
         path: /etc/wsl.conf
         line: command="mount --make-shared /"
-      ignore_errors: true
-
+        
     - name: git clone dot files
       ansible.builtin.git:
         repo: https://github.com/gozumi/dotfiles.git
