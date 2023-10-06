@@ -36,12 +36,6 @@
         state: link
         force: true
 
-    - name: Create a symbolic link to the git-prompt.sh file
-      ansible.builtin.file:
-        src: "{{home_dir}}/git-downloads/dotfiles/git-prompt.sh"
-        dest: "{{home_dir}}/git-prompt.sh"
-        state: link
-
     - name: Make zsh the default shell
       user: "name={{ ansible_user_id }} shell=/usr/bin/zsh"
       become: yes
