@@ -19,9 +19,13 @@
           - zsh
           - vim
           - cmake
-          - gcc-arm-none-eabi
-          - libnewlib-arm-none-eabi
           - build-essential
+
+    - name: Add the / shared mount to the wsl.conf file
+      ansible.builtin.lineinfile:
+        path: /etc/wsl.conf
+        line: command="mount --make-shared /"
+      ignore_errors: true
 
     - name: git clone dot files
       ansible.builtin.git:
