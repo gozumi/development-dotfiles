@@ -27,11 +27,17 @@
         path: /etc/sudoers
         line: "{{ ansible_user_id }} ALL=(ALL) NOPASSWD:ALL"
         
-    - name: Add the / shared mount to the wsl.conf file
+    - name: Check that /etc/wsl.conf exists
+        ansible.builtin.stat:
+          path: /etc/wsl.conf
+        register: wsl_conf
+  
+    - name: Add the / shared mount to the /etc/wsl.conf file if it exists [this means we are running inside wsl]
       become: yes
       ansible.builtin.lineinfile:
         path: /etc/wsl.conf
         line: command="mount --make-shared /"
+      when: wsl_conf.stat.exists
         
     - name: git clone dot files
       ansible.builtin.git:
