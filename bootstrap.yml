@@ -28,9 +28,9 @@
         line: "{{ ansible_user_id }} ALL=(ALL) NOPASSWD:ALL"
         
     - name: Check that /etc/wsl.conf exists
-        ansible.builtin.stat:
-          path: /etc/wsl.conf
-        register: wsl_conf
+      ansible.builtin.stat:
+        path: /etc/wsl.conf
+      register: wsl_conf
   
     - name: Add the / shared mount to the /etc/wsl.conf file if it exists [this means we are running inside wsl]
       become: yes
