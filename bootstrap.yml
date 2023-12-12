@@ -42,12 +42,12 @@
     - name: git clone dot files
       ansible.builtin.git:
         repo: https://github.com/gozumi/dotfiles.git
-        dest: "{{home_dir}}/git-downloads/dotfiles"
+        dest: "{{home_dir}}/packages/dotfiles"
         version: main
 
     - name: Create a symbolic link to the .zshrc file
       ansible.builtin.file:
-        src: "{{home_dir}}/git-downloads/dotfiles/.zshrc"
+        src: "{{home_dir}}/packages/dotfiles/.zshrc"
         dest: "{{home_dir}}/.zshrc"
         state: link
         force: true
@@ -59,12 +59,12 @@
     - name: Download the rust installation script
       ansible.builtin.get_url:
         url: https://sh.rustup.rs
-        dest: "{{home_dir}}/git-downloads/sh.rustup.rs"
+        dest: "{{home_dir}}/packages/sh.rustup.rs"
         mode: "0750"
         force: true
 
     - name: Install rust
-      ansible.builtin.shell: "{{home_dir}}/git-downloads/sh.rustup.rs -y"
+      ansible.builtin.shell: "{{home_dir}}/packages/sh.rustup.rs -y"
 
     - name: Give a notification that the script is done
       ansible.builtin.shell: echo "Ansible setup is done! Woohoo!"
