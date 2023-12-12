@@ -45,6 +45,12 @@
         dest: "{{home_dir}}/packages/dotfiles"
         version: main
 
+    - name: git clone zsh autocomplete
+      ansible.builtin.git:
+        repo: https://github.com/marlonrichert/zsh-autocomplete.git
+        dest: "{{home_dir}}/packages/zsh-autocomplete"
+        version: 23.07.13
+
     - name: Create a symbolic link to the .zshrc file
       ansible.builtin.file:
         src: "{{home_dir}}/packages/dotfiles/.zshrc"
