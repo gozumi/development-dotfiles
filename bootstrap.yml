@@ -4,6 +4,31 @@
     - set_fact:
         home_dir: "{{ lookup('env', 'HOME') }}"
 
+    - name: Check if dotfiles directory exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/packages/dotfiles"
+      register: dotfiles
+
+    - name: Check if .nvm directory exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/.nvm"
+      register: nvm
+
+    - name: Check that /etc/wsl.conf exists
+      ansible.builtin.stat:
+        path: /etc/wsl.conf
+      register: wsl_conf
+  
+    - name: Check that zsh-autocomplete exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/packages/zsh-autocomplete"
+      register: zsh_autocomplete
+  
+    - name: Check that the rust install script exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/packages/sh.rustup.rs"
+      register: rust_install_script
+  
     - name: Update packages
       become: yes
       ansible.builtin.apt:
@@ -27,11 +52,6 @@
         path: /etc/sudoers
         line: "{{ ansible_user_id }} ALL=(ALL) NOPASSWD:ALL"
         
-    - name: Check that /etc/wsl.conf exists
-      ansible.builtin.stat:
-        path: /etc/wsl.conf
-      register: wsl_conf
-  
     - name: Add the / shared mount to the /etc/wsl.conf file if it exists [this means we are running inside wsl]
       become: yes
       ansible.builtin.lineinfile:
@@ -44,12 +64,14 @@
         repo: https://github.com/gozumi/dotfiles.git
         dest: "{{home_dir}}/packages/dotfiles"
         version: main
+      when: not dotfiles.stat.exists
 
     - name: git clone zsh autocomplete
       ansible.builtin.git:
         repo: https://github.com/marlonrichert/zsh-autocomplete.git
         dest: "{{home_dir}}/packages/zsh-autocomplete"
         version: 23.07.13
+      when: not zsh_autocomplete.stat.exists
 
     - name: Create a symbolic link to the .zshrc file
       ansible.builtin.file:
@@ -68,9 +90,14 @@
         dest: "{{home_dir}}/packages/sh.rustup.rs"
         mode: "0750"
         force: true
+      when: not rust_install_script.stat.exists
 
     - name: Install rust
       ansible.builtin.shell: "{{home_dir}}/packages/sh.rustup.rs -y"
 
-    - name: Give a notification that the script is done
-      ansible.builtin.shell: echo "Ansible setup is done! Woohoo!"
+    - name: git clone nvm
+      ansible.builtin.git:
+        repo: https://github.com/nvm-sh/nvm.git
+        dest: "{{home_dir}}/.nvm"
+        version: v0.39.7
+      when: not nvm.stat.exists
