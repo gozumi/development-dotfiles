@@ -45,6 +45,7 @@
           - vim
           - cmake
           - build-essential
+          - ncdu
 
     - name: Allow the current user to sudo without a password
       become: yes
