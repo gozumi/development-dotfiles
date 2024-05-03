@@ -29,6 +29,16 @@
         path: "{{home_dir}}/packages/sh.rustup.rs"
       register: rust_install_script
   
+    - name: Check that the .config folder exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/.config"
+      register: dot_config
+  
+    - name: Check that the helix config exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/.config/helix"
+      register: helix_config
+  
     - name: Update packages
       become: yes
       ansible.builtin.apt:
@@ -52,6 +62,21 @@
       ansible.builtin.lineinfile:
         path: /etc/sudoers
         line: "{{ ansible_user_id }} ALL=(ALL) NOPASSWD:ALL"
+
+    - name: Create the .config folder if it does not exist
+      ansible.builtin.file:
+        path: "{{home_dir}}/.config"
+        state: directory
+        mode: '755'
+      when: not dot_config.stat.exists
+
+    - name: Create a symbolic link to the helix config
+      ansible.builtin.file:
+        src: "{{home_dir}}/packages/dotfiles/helix-config"
+        dest: "{{home_dir}}/.config/helix"
+        state: link
+        force: true
+      when: not helix_config.stat.exists
         
     - name: Add the / shared mount to the /etc/wsl.conf file if it exists [this means we are running inside wsl]
       become: yes
@@ -78,19 +103,6 @@
       ansible.builtin.file:
         src: "{{home_dir}}/packages/dotfiles/.zshrc"
         dest: "{{home_dir}}/.zshrc"
-        state: link
-        force: true
-
-    - name: Create the helix config directory
-      ansible.builtin.file:
-        path: "{{home_dir}}/.config/helix"
-        state: directory
-        mode: "0755"
-
-    - name: Create a symbolic link to the helix config file
-      ansible.builtin.file:
-        src: "{{home_dir}}/packages/dotfiles/helix-config.toml"
-        dest: "{{home_dir}}/.config/helix/config.toml"
         state: link
         force: true
 
