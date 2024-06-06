@@ -140,8 +140,8 @@
         version: 24.03
       when: not helix_source_code.stat.exists
 
-    - name: Install the helix editor
-      ansible.builtin.shell: "cargo install --path helix-term --locked"
-      args:
-        chdir: "{{home_dir}}/packages/helix"
+    # - name: Install the helix editor
+    #   ansible.builtin.shell: "cargo install --path helix-term --locked"
+    #   args:
+    #     chdir: "{{home_dir}}/packages/helix"
 
