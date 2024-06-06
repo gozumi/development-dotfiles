@@ -39,6 +39,11 @@
         path: "{{home_dir}}/.config/helix"
       register: helix_config
   
+    - name: Check that the helix editor source code exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/packages/helix"
+      register: helix_source_code
+  
     - name: Update packages
       become: yes
       ansible.builtin.apt:
@@ -127,3 +132,16 @@
         dest: "{{home_dir}}/.nvm"
         version: v0.39.7
       when: not nvm.stat.exists
+    
+    - name: git clone the helix editor source code
+      ansible.builtin.git:
+        repo: https://github.com/helix-editor/helix
+        dest: "{{home_dir}}/packages/helix"
+        version: 24.03
+      when: not helix_source_code.stat.exists
+
+    - name: Install the helix editor
+      ansible.builtin.shell: "cargo install --path helix-term --locked"
+      args:
+        chdir: "{{home_dir}}/packages/helix"
+
