@@ -79,14 +79,6 @@
         state: directory
         mode: '755'
       when: not dot_config.stat.exists
-
-    - name: Create a symbolic link to the helix config
-      ansible.builtin.file:
-        src: "{{home_dir}}/packages/dotfiles/helix-config"
-        dest: "{{home_dir}}/.config/helix"
-        state: link
-        force: true
-      when: not helix_config.stat.exists
         
     - name: Add the / shared mount to the /etc/wsl.conf file if it exists [this means we are running inside wsl]
       become: yes
@@ -101,6 +93,14 @@
         dest: "{{home_dir}}/packages/dotfiles"
         version: main
       when: not dotfiles.stat.exists
+
+    - name: Create a symbolic link to the helix config
+      ansible.builtin.file:
+        src: "{{home_dir}}/packages/dotfiles/helix-config"
+        dest: "{{home_dir}}/.config/helix"
+        state: link
+        force: true
+      when: not helix_config.stat.exists
 
     - name: git clone zsh autocomplete
       ansible.builtin.git:
