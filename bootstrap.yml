@@ -31,13 +31,18 @@
   
     - name: Check that the rust-analyzer source code exists
       ansible.builtin.stat:
-        path: "{{home_dir}}/packages/rust-analyzer"
-      register: rust_analyzer_source_code
+        path: "{{home_dir}}/.local/bin/rust-analyzer"
+      register: rust_analyzer
   
     - name: Check that the .config folder exists
       ansible.builtin.stat:
         path: "{{home_dir}}/.config"
       register: dot_config
+  
+    - name: Check that the .local/bin folder exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/.local/bin"
+      register: dot_local_bin
   
     - name: Check that the helix config exists
       ansible.builtin.stat:
@@ -79,6 +84,13 @@
         state: directory
         mode: '755'
       when: not dot_config.stat.exists
+        
+    - name: Create the .local/bin folder if it does not exist
+      ansible.builtin.file:
+        path: "{{home_dir}}/.local/bin"
+        state: directory
+        mode: '755'
+      when: not dot_local_bin.stat.exists
         
     - name: Add the / shared mount to the /etc/wsl.conf file if it exists [this means we are running inside wsl]
       become: yes
@@ -131,12 +143,13 @@
     - name: Install rust
       ansible.builtin.shell: "{{home_dir}}/packages/sh.rustup.rs -y"
 
-    - name: git clone the rust analyzer source code
-      ansible.builtin.git:
-        repo: https://github.com/rust-lang/rust-analyzer.git
-        dest: "{{home_dir}}/packages/rust-analyzer"
-        version: 2024-06-03
-      when: not rust_analyzer_source_code.stat.exists
+    - name: Install rust analyzer
+      ansible.builtin.get_url:
+        url: https://github.com/rust-lang/rust-analyzer/releases/download/nightly/rust-analyzer-arm-unknown-linux-gnueabihf.gz
+        dest: "{{home_dir}}/.local/bin/rust-analyzer"
+        mode: "0750"
+        force: true
+      when: not rust_analyzer.stat.exists
 
     - name: git clone nvm
       ansible.builtin.git:
