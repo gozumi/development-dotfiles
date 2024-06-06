@@ -146,10 +146,15 @@
     - name: Install rust analyzer
       ansible.builtin.get_url:
         url: https://github.com/rust-lang/rust-analyzer/releases/download/nightly/rust-analyzer-arm-unknown-linux-gnueabihf.gz
-        dest: "{{home_dir}}/.local/bin/rust-analyzer"
+        dest: "{{home_dir}}/packages/rust-analyzer"
         mode: "0750"
         force: true
       when: not rust_analyzer.stat.exists
+
+    - name: Extract rust analyzer into ~/.local/bin
+      ansible.builtin.unarchive:
+        src: "{{home_dir}}/packages/rust-analyzer"
+        dest: "{{home_dir}}/.local/bin"
 
     - name: git clone nvm
       ansible.builtin.git:
