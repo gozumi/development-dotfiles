@@ -139,12 +139,11 @@
         version: v0.39.7
       when: not nvm.stat.exists
 
-    - name: Install node 20
-      ansible.builtin.shell: "{{home_dir}}/.nvm/nvm.sh && nvm install 20"
-      # args:
-      #   chdir: "{{home_dir}}/packages/rust-analyzer"
-      when: not nvm.stat.exists
-
+    # - name: Install node 20
+    #   ansible.builtin.shell: "{{home_dir}}/.nvm/nvm.sh && nvm install 20"
+    #   # args:
+    #   #   chdir: "{{home_dir}}/packages/rust-analyzer"
+    #   when: not nvm.stat.exists
 
     - name: Download the rust installation script
       ansible.builtin.get_url:
@@ -164,11 +163,11 @@
         version: 2024-06-17
       when: not rust_analyzer.stat.exists
 
-    - name: Install rust analyzer
-      ansible.builtin.shell: "{{home_dir}}/.cargo/bin/cargo xtask install"
-      args:
-        chdir: "{{home_dir}}/packages/rust-analyzer"
-      when: not rust_analyzer.stat.exists
+    # - name: Install rust analyzer
+    #   ansible.builtin.shell: "{{home_dir}}/.cargo/bin/cargo xtask install"
+    #   args:
+    #     chdir: "{{home_dir}}/packages/rust-analyzer"
+    #   when: not rust_analyzer.stat.exists
 
     - name: git clone the helix editor source code
       ansible.builtin.git:
