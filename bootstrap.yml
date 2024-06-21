@@ -143,18 +143,18 @@
     - name: Install rust
       ansible.builtin.shell: "{{home_dir}}/packages/sh.rustup.rs -y"
 
-    # - name: Install rust analyzer
-    #   ansible.builtin.get_url:
-    #     url: https://github.com/rust-lang/rust-analyzer/releases/download/nightly/rust-analyzer-arm-unknown-linux-gnueabihf.gz
-    #     dest: "{{home_dir}}/packages/rust-analyzer"
-    #     mode: "0750"
-    #     force: true
-    #   when: not rust_analyzer.stat.exists
+    - name: Install rust analyzer
+      ansible.builtin.get_url:
+        url: https://github.com/rust-lang/rust-analyzer/releases/download/2024-06-17/rust-analyzer-arm-unknown-linux-gnueabihf.gz
+        dest: "{{home_dir}}/packages/rust-analyzer-arm-unknown-linux-gnueabihf.gz"
+        mode: "0644"
+        force: true
+      when: not rust_analyzer.stat.exists
 
-    # - name: Extract rust analyzer into ~/.local/bin
-    #   ansible.builtin.unarchive:
-    #     src: "{{home_dir}}/packages/rust-analyzer"
-    #     dest: "{{home_dir}}/.local/bin"
+    - name: Extract rust analyzer into ~/.local/bin
+      ansible.builtin.unarchive:
+        src: "{{home_dir}}/packages/rust-analyzer-arm-unknown-linux-gnueabihf.gz"
+        dest: "{{home_dir}}/.local/bin"
 
     - name: git clone nvm
       ansible.builtin.git:
