@@ -71,6 +71,7 @@
           - cmake
           - build-essential
           - ncdu
+          - unzip
 
     - name: Allow the current user to sudo without a password
       become: yes
