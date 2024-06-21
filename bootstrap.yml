@@ -177,7 +177,7 @@
       when: not helix_source_code.stat.exists
 
     - name: Install the helix editor
-      ansible.builtin.shell: "{{home_dir}}/.cargo/bin/cargo install --path helix-term --locked"
+      ansible.builtin.shell: "{{home_dir}}/.cargo/bin/cargo install --path helix-term --locked && ln -Ts $PWD/runtime ~/.config/helix/runtime"
       args:
         chdir: "{{home_dir}}/packages/helix"
 
