@@ -31,7 +31,7 @@
   
     - name: Check that the rust-analyzer source code exists
       ansible.builtin.stat:
-        path: "{{home_dir}}/.local/bin/rust-analyzer"
+        path: "{{home_dir}}/.cargo/bin/rust-analyzer"
       register: rust_analyzer
   
     - name: Check that the .config folder exists
