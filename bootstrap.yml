@@ -146,7 +146,7 @@
     - name: git clone rust analyzer
       ansible.builtin.git:
         repo: https://github.com/rust-lang/rust-analyzer.git
-        dest: "{{home_dir}}/packages"
+        dest: "{{home_dir}}/packages/rust-analyzer"
         version: 2024-06-17
       when: not rust_analyzer.stat.exists
 
