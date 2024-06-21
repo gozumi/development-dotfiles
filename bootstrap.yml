@@ -140,7 +140,7 @@
       when: not nvm.stat.exists
 
     - name: Install node 20
-      ansible.builtin.shell: "nvm install 20"
+      ansible.builtin.shell: "{{home_dir}}/.nvm/nvm.sh && nvm install 20"
       # args:
       #   chdir: "{{home_dir}}/packages/rust-analyzer"
       when: not nvm.stat.exists
