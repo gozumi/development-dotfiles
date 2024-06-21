@@ -73,6 +73,9 @@
           - ncdu
           - tar
           - unzip
+          - bzip2
+          - xz-utils
+          - zstd
 
     - name: Allow the current user to sudo without a password
       become: yes
