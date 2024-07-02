@@ -164,7 +164,7 @@
       when: not rust_analyzer.stat.exists
 
     # - name: Install rust analyzer
-    #   ansible.builtin.shell: "{{home_dir}}/.cargo/bin/cargo xtask install"
+    #   ansible.builtin.shell: "{{home_dir}}/.cargo/bin/cargo xtask install --server"
     #   args:
     #     chdir: "{{home_dir}}/packages/rust-analyzer"
     #   when: not rust_analyzer.stat.exists
