@@ -160,7 +160,7 @@
       ansible.builtin.git:
         repo: https://github.com/rust-lang/rust-analyzer.git
         dest: "{{home_dir}}/packages/rust-analyzer"
-        version: 2024-06-17
+        version: 2024-07-08
       when: not rust_analyzer.stat.exists
 
     # - name: Install rust analyzer
