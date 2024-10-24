@@ -74,6 +74,9 @@
           - build-essential
           - ncdu
           - iputils-ping
+          - openssl
+          - libssl-dev
+          - pkg-config
 
     - name: Allow the current user to sudo without a password
       become: yes
