@@ -1,0 +1,63 @@
+- hosts: localhost
+
+  tasks:
+    - set_fact:
+        home_dir: "{{ lookup('env', 'HOME') }}"
+
+    - name: Check if dotfiles directory exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/packages/dotfiles"
+      register: dotfiles
+
+    - name: Check that zsh-autocomplete exists
+      ansible.builtin.stat:
+        path: "{{home_dir}}/packages/zsh-autocomplete"
+      register: zsh_autocomplete
+        
+    - name: Update packages
+      become: yes
+      ansible.builtin.apt:
+        update_cache: "yes"
+        upgrade: "yes"
+        state: latest
+
+    - name: Install packages
+      become: yes
+      ansible.builtin.apt:
+        name:
+          - bat
+          - zsh
+          - vim
+          - curl
+          - iputils-ping
+
+    - name: Allow the current user to sudo without a password
+      become: yes
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: "{{ ansible_user_id }} ALL=(ALL) NOPASSWD:ALL"
+                
+    - name: git clone dot files
+      ansible.builtin.git:
+        repo: https://github.com/gozumi/dotfiles.git
+        dest: "{{home_dir}}/packages/dotfiles"
+        version: main
+      when: not dotfiles.stat.exists
+
+    - name: git clone zsh autocomplete
+      ansible.builtin.git:
+        repo: https://github.com/marlonrichert/zsh-autocomplete.git
+        dest: "{{home_dir}}/packages/zsh-autocomplete"
+        version: 23.07.13
+      when: not zsh_autocomplete.stat.exists
+
+    - name: Create a symbolic link to the .zshrc file
+      ansible.builtin.file:
+        src: "{{home_dir}}/packages/dotfiles/.zshrc"
+        dest: "{{home_dir}}/.zshrc"
+        state: link
+        force: true
+
+    - name: Make zsh the default shell
+      user: "name={{ ansible_user_id }} shell=/usr/bin/zsh"
+      become: yes
