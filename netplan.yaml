@@ -1,0 +1,11 @@
+% sudo cat /etc/netplan/50-cloud-init.yaml
+network:
+  version: 2
+
+  ethernets:
+    eth0:
+      dhcp4: true
+      addresses:
+        - <IP ADDRESS>/24
+      gateway4: <GATEWAY IP ADDRESS>
+      
