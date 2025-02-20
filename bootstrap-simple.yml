@@ -37,12 +37,12 @@
         path: /etc/sudoers
         line: "{{ ansible_user_id }} ALL=(ALL) NOPASSWD:ALL"
                 
-    - name: git clone dot files
-      ansible.builtin.git:
-        repo: https://github.com/gozumi/dotfiles.git
-        dest: "{{home_dir}}/packages/dotfiles"
-        version: main
-      when: not dotfiles.stat.exists
+    # - name: git clone dot files
+    #   ansible.builtin.git:
+    #     repo: https://github.com/gozumi/dotfiles.git
+    #     dest: "{{home_dir}}/packages/dotfiles"
+    #     version: main
+    #   when: not dotfiles.stat.exists
 
     - name: git clone zsh autocomplete
       ansible.builtin.git:
@@ -53,7 +53,7 @@
 
     - name: Create a symbolic link to the .zshrc file
       ansible.builtin.file:
-        src: "{{home_dir}}/packages/dotfiles/.zshrc"
+        src: .zshrc
         dest: "{{home_dir}}/.zshrc"
         state: link
         force: true
