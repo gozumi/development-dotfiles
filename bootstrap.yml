@@ -4,10 +4,10 @@
     - set_fact:
         home_dir: "{{ lookup('env', 'HOME') }}"
 
-    - name: Check if dotfiles directory exists
-      ansible.builtin.stat:
-        path: "{{home_dir}}/packages/dotfiles"
-      register: dotfiles
+    # - name: Check if dotfiles directory exists
+    #   ansible.builtin.stat:
+    #     path: "{{home_dir}}/packages/dotfiles"
+    #   register: dotfiles
 
     - name: Check if .nvm directory exists
       ansible.builtin.stat:
@@ -105,31 +105,31 @@
     #     line: command="mount --make-shared /"
     #   when: wsl_conf.stat.exists
         
-    - name: git clone dot files
-      ansible.builtin.git:
-        repo: https://github.com/gozumi/dotfiles.git
-        dest: "{{home_dir}}/packages/dotfiles"
-        version: main
-      when: not dotfiles.stat.exists
+    # - name: git clone dot files
+    #   ansible.builtin.git:
+    #     repo: https://github.com/gozumi/dotfiles.git
+    #     dest: "{{home_dir}}/packages/dotfiles"
+    #     version: main
+    #   when: not dotfiles.stat.exists
 
-    - name: Create a symbolic link to the helix config
-      ansible.builtin.file:
-        src: "{{home_dir}}/packages/dotfiles/helix-config"
-        dest: "{{home_dir}}/.config/helix"
-        state: link
-        force: true
-      when: not helix_config.stat.exists
+    # - name: Create a symbolic link to the helix config
+    #   ansible.builtin.file:
+    #     src: "{{home_dir}}/packages/dotfiles/helix-config"
+    #     dest: "{{home_dir}}/.config/helix"
+    #     state: link
+    #     force: true
+    #   when: not helix_config.stat.exists
 
     - name: git clone zsh autocomplete
       ansible.builtin.git:
         repo: https://github.com/marlonrichert/zsh-autocomplete.git
         dest: "{{home_dir}}/packages/zsh-autocomplete"
-        version: 23.07.13
+        version: 25.03.19
       when: not zsh_autocomplete.stat.exists
 
     - name: Create a symbolic link to the .zshrc file
       ansible.builtin.file:
-        src: "{{home_dir}}/packages/dotfiles/.zshrc"
+        src: ".zshrc"
         dest: "{{home_dir}}/.zshrc"
         state: link
         force: true
@@ -142,7 +142,7 @@
       ansible.builtin.git:
         repo: https://github.com/nvm-sh/nvm.git
         dest: "{{home_dir}}/.nvm"
-        version: v0.40.1
+        version: v0.40.3
       when: not nvm.stat.exists
 
     # - name: Install node 20
