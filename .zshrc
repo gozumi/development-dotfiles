@@ -90,7 +90,7 @@ alias start-shell-container=$HOME/development/shell-container/start.sh
 alias stop-shell-container=$HOME/development/shell-container/stop.sh
 alias enter-shell-container=$HOME/development/shell-container/enter.sh
 
-[ ! -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+[ -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 [ ! -d $HOME/.zfunc ] && mkdir $HOME/.zfunc 
 [ ! -f $HOME/.zfunc/_rustup ] && rustup completions zsh > $HOME/.zfunc/_rustup 
