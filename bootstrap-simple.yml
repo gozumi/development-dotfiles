@@ -48,7 +48,7 @@
       ansible.builtin.git:
         repo: https://github.com/marlonrichert/zsh-autocomplete.git
         dest: "{{home_dir}}/packages/zsh-autocomplete"
-        version: 23.07.13
+        version: 25.03.19
       when: not zsh_autocomplete.stat.exists
 
     - name: Create a symbolic link to the .zshrc file
