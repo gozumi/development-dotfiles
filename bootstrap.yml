@@ -46,16 +46,12 @@
         path: "{{home_dir}}/.config"
         state: directory
         mode: '755'
-      args:
-        creates: "{{home_dir}}/.config"
         
     - name: Create the .local/bin folder if it does not exist
       ansible.builtin.file:
         path: "{{home_dir}}/.local/bin"
         state: directory
         mode: '755'
-      args:
-        creates: "{{home_dir}}/.local/bin"
         
     - name: git clone zsh autocomplete
       ansible.builtin.git:
@@ -71,8 +67,6 @@
         dest: "{{ home_dir }}/.zshrc"
         state: link
         force: true
-      args:
-        creates: "{{ home_dir }}/.zshrc"
 
     - name: Make zsh the default shell
       user: "name={{ ansible_user_id }} shell=/usr/bin/zsh"
