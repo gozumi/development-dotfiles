@@ -58,8 +58,6 @@
         repo: https://github.com/marlonrichert/zsh-autocomplete.git
         dest: "{{home_dir}}/packages/zsh-autocomplete"
         version: 25.03.19
-      args:
-        creates: "{{home_dir}}/packages/zsh-autocomplete"
 
     - name: Create a symbolic link to the .zshrc file
       ansible.builtin.file:
@@ -77,8 +75,6 @@
         repo: https://github.com/nvm-sh/nvm.git
         dest: "{{home_dir}}/.nvm"
         version: v0.40.3
-      args:
-        creates: "{{home_dir}}/.nvm"
 
     - name: Download the rust installation script
       ansible.builtin.get_url:
