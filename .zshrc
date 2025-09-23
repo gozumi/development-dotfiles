@@ -13,11 +13,21 @@ function precmd () {
   add-zsh-hook precmd vcs_info
 }
 
+
+if [[ "$OSTYPE" == "linux-gnu"* && -f /etc/lsb-release ]]; then
+  USER_COLOR=208
+  PATH_COLOR=178
+else
+  USER_COLOR=33
+  PATH_COLOR=99
+fi
+
 zstyle ':vcs_info:git*' formats "%b %m"
 setopt PROMPT_SUBST
 
 RPROMPT=%F{242}\$vcs_info_msg_0_
-PROMPT="%F{33}%n@%m %F{99}%2~%F{white}"$'\n'"%# "
+PROMPT="%F{$USER_COLOR}%n@%m %F{$PATH_COLOR}%2~%F{white}"$'\n'"%# "
+
 zstyle ':vcs_info:*' check-for-changes true
 zstyle ':vcs_info:*' unstagedstr ' *'
 zstyle ':vcs_info:*' stagedstr ' +'
