@@ -71,6 +71,8 @@
         dest: "{{ home_dir }}/.zshrc"
         state: link
         force: true
+      args:
+        creates: "{{ home_dir }}/.zshrc"
 
     - name: Make zsh the default shell
       user: "name={{ ansible_user_id }} shell=/usr/bin/zsh"
