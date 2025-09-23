@@ -81,7 +81,7 @@ export TZ=Europe/London
 # export LANG=en_GB.UTF-8
 # export LANGUAGE=en_GB
 export PATH=$HOME/.local/bin:$HOME/.bun/bin:$PATH
-export HELIX_RUNTIME=$HOME/src/helix/runtime
+export DISPLAY=host.docker.internal:0 
 
 alias bat=batcat
 alias ls="ls --color=auto"
