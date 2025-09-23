@@ -82,11 +82,11 @@
         dest: "{{home_dir}}/packages/sh.rustup.rs"
         mode: "0750"
         force: true
-      args:
-        creates: "{{home_dir}}/packages/sh.rustup.rs"
 
     - name: Install rust
       ansible.builtin.shell: "{{home_dir}}/packages/sh.rustup.rs -y"
+      args:
+        creates: "{{home_dir}}/.cargo/bin/rustc"
 
     - name: Install bun
       ansible.builtin.shell: "curl -fsSL https://bun.sh/install | bash"
