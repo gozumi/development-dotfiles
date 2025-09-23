@@ -129,8 +129,8 @@
 
     - name: Create a symbolic link to the .zshrc file
       ansible.builtin.file:
-        src: ".zshrc"
-        dest: "{{home_dir}}/.zshrc"
+        src: "{{ playbook_dir }}/.zshrc"
+        dest: "{{ home_dir }}/.zshrc"
         state: link
         force: true
 
