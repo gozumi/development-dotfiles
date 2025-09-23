@@ -83,6 +83,7 @@
           - libxdo-dev
           - libayatana-appindicator3-dev
           - librsvg2-dev
+          - unzip
 
     - name: Allow the current user to sudo without a password
       become: yes
