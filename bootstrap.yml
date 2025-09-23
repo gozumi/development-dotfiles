@@ -77,6 +77,12 @@
           - openssl
           - libssl-dev
           - pkg-config
+          - libwebkit2gtk-4.1-dev
+          - wget
+          - file
+          - libxdo-dev
+          - libayatana-appindicator3-dev
+          - librsvg2-dev
 
     - name: Allow the current user to sudo without a password
       become: yes
@@ -161,6 +167,11 @@
 
     - name: Install rust
       ansible.builtin.shell: "{{home_dir}}/packages/sh.rustup.rs -y"
+
+    - name: Install bun
+      ansible.builtin.shell: "curl -fsSL https://bun.sh/install | bash"
+      args:
+        creates: "{{home_dir}}/.bun/bin/bun"
 
     # - name: git clone rust analyzer
     #   ansible.builtin.git:
