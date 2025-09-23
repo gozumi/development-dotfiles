@@ -4,10 +4,10 @@
     - set_fact:
         home_dir: "{{ lookup('env', 'HOME') }}"
 
-    - name: Check if dotfiles directory exists
-      ansible.builtin.stat:
-        path: "{{home_dir}}/packages/dotfiles"
-      register: dotfiles
+    # - name: Check if dotfiles directory exists
+    #   ansible.builtin.stat:
+    #     path: "{{home_dir}}/packages/dotfiles"
+    #   register: dotfiles
 
     - name: Check that zsh-autocomplete exists
       ansible.builtin.stat:
