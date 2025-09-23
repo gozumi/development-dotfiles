@@ -95,11 +95,9 @@ alias enter-shell-container=$HOME/development/shell-container/enter.sh
 [ ! -d $HOME/.zfunc ] && mkdir $HOME/.zfunc 
 [ ! -f $HOME/.zfunc/_rustup ] && rustup completions zsh > $HOME/.zfunc/_rustup 
 [ ! -f $HOME/.zfunc/_cargo ] && rustup completions zsh cargo > $HOME/.zfunc/_cargo
+[ ! -f $HOME/.zfunc/_bun ] && bun completions zsh > $HOME/.zfunc/_bun
 # [ ! -f $HOME/.zfunc/_podman ] && podman completion -f $HOME/.zfunc/_podman zsh
 
 [ -d $HOME/.nvm ] && export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# bun completions
-[ -s "/home/developer/.bun/_bun" ] && source "/home/developer/.bun/_bun"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm 
