@@ -80,7 +80,7 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 export TZ=Europe/London
 # export LANG=en_GB.UTF-8
 # export LANGUAGE=en_GB
-export PATH=$HOME/.local/bin:$PATH
+export PATH=$HOME/.local/bin:$HOME/.bun/bin:$PATH
 export HELIX_RUNTIME=$HOME/src/helix/runtime
 
 alias bat=batcat
@@ -100,3 +100,6 @@ alias enter-shell-container=$HOME/development/shell-container/enter.sh
 [ -d $HOME/.nvm ] && export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# bun completions
+[ -s "/home/developer/.bun/_bun" ] && source "/home/developer/.bun/_bun"
