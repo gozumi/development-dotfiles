@@ -66,6 +66,13 @@
         state: link
         force: true
 
+    - name: Create a symbolic link to the .zshenv file
+      ansible.builtin.file:
+        src: "{{ playbook_dir }}/.zshenv"
+        dest: "{{ home_dir }}/.zshenv"
+        state: link
+        force: true
+
     - name: Make zsh the default shell
       user: "name={{ ansible_user_id }} shell=/usr/bin/zsh"
       become: yes
