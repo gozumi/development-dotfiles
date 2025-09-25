@@ -110,3 +110,9 @@ get-ip-address() {
 [ ! -f $HOME/.zfunc/_cargo ] && rustup completions zsh cargo > $HOME/.zfunc/_cargo
 [ ! -f $HOME/.zfunc/_bun ] && bun completions zsh > $HOME/.zfunc/_bun
 # [ ! -f $HOME/.zfunc/_podman ] && podman completion -f $HOME/.zfunc/_podman zsh
+
+# Load nvm on macOS with Homebrew
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+autoload -U +X bashcompinit && bashcompinit
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" 
