@@ -90,6 +90,19 @@ alias start-shell-container=$HOME/development/shell-container/start.sh
 alias stop-shell-container=$HOME/development/shell-container/stop.sh
 alias enter-shell-container=$HOME/development/shell-container/enter.sh
 
+get-ip-address() {
+  if command -v ip >/dev/null 2>&1; then
+    # Linux: prints "iface IP"
+    ip -4 -o addr show scope global | awk '{split($4,a,"/"); print $2, a[1]}'
+  elif command -v ifconfig >/dev/null 2>&1; then
+    # macOS/BSD: associate inet lines with the current interface
+    ifconfig | awk '/^[^ \t]/ {iface=$1; sub(/:$/,"",iface)} /inet / && $2 != "127.0.0.1" {print iface, $2}'
+  else
+    echo "No suitable network tool found (ip or ifconfig)" >&2
+    return 1
+  fi
+}
+
 [ -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 [ ! -d $HOME/.zfunc ] && mkdir $HOME/.zfunc 
