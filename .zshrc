@@ -80,7 +80,7 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 export TZ=Europe/London
 # export LANG=en_GB.UTF-8
 # export LANGUAGE=en_GB
-export PATH=$HOME/.local/bin:$HOME/.bun/bin:$PATH
+export PATH=$HOME/.local/bin:$HOME/.bun/bin:$HOME/.deno/bin:$PATH
 export DISPLAY=host.docker.internal:0 
 
 alias bat=batcat
@@ -89,6 +89,7 @@ alias l="ls -al"
 alias start-shell-container=$HOME/development/shell-container/start.sh
 alias stop-shell-container=$HOME/development/shell-container/stop.sh
 alias enter-shell-container=$HOME/development/shell-container/enter.sh
+alias gitpush="git push origin && git push gitlab && git push bitbucket"
 
 get-ip-address() {
   if command -v ip >/dev/null 2>&1; then
@@ -105,11 +106,12 @@ get-ip-address() {
 
 [ -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
+# Add completions
 [ ! -d $HOME/.zfunc ] && mkdir $HOME/.zfunc 
 [ ! -f $HOME/.zfunc/_rustup ] && rustup completions zsh > $HOME/.zfunc/_rustup 
 [ ! -f $HOME/.zfunc/_cargo ] && rustup completions zsh cargo > $HOME/.zfunc/_cargo
 [ ! -f $HOME/.zfunc/_bun ] && bun completions zsh > $HOME/.zfunc/_bun
-# [ ! -f $HOME/.zfunc/_podman ] && podman completion -f $HOME/.zfunc/_podman zsh
+[ ! -f $HOME/.zfunc/_deno ] && deno completions zsh > $HOME/.zfunc/_deno
 
 # Load nvm on macOS with Homebrew
 export NVM_DIR="$HOME/.nvm"
