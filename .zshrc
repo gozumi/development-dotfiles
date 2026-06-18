@@ -118,3 +118,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
 autoload -U +X bashcompinit && bashcompinit
 [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" 
+
+# Maintain a stable nvm "current" symlink so tools (e.g. SonarLint) can point at it
+export NVM_SYMLINK_CURRENT=true
