@@ -122,3 +122,17 @@ autoload -U +X bashcompinit && bashcompinit
 
 # Maintain a stable nvm "current" symlink so tools (e.g. SonarLint) can point at it
 export NVM_SYMLINK_CURRENT=true
+
+# Auto-start the Docker daemon in sandboxed dev containers that have no systemd
+# (PID 1 is sshd) and where /etc/init.d/docker's `ulimit -Hn` call fails, so
+# `service docker start` doesn't work. Scoped to that exact situation so this
+# is a no-op on macOS (Docker Desktop) or any systemd-managed Linux box.
+no_systemd=true
+if command -v systemctl >/dev/null 2>&1 && systemctl is-system-running >/dev/null 2>&1; then
+  no_systemd=false
+fi
+if command -v dockerd >/dev/null 2>&1 && [ "$no_systemd" = true ] && ! pgrep -x dockerd >/dev/null 2>&1; then
+  sudo mkdir -p /var/log/docker
+  sudo bash -c 'nohup dockerd >> /var/log/docker/dockerd.log 2>&1 & disown'
+fi
+unset no_systemd
