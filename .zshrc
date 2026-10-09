@@ -106,6 +106,10 @@ get-ip-address() {
   fi
 }
 
+pr-checks() {
+  gh pr checks "$1" --watch
+}
+
 [ -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 # Add completions
