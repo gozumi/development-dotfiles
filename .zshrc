@@ -110,6 +110,25 @@ pr-checks() {
   gh pr checks "$1" --watch
 }
 
+cci-cancel-all() {
+  local TOKEN=$(awk -F': *' '$1=="token"{print $2}' ~/.circleci/cli.yml)
+  local API=https://circleci.com/api/v2
+  local PROJECT=circleci/UMgunUQXZbagsQGQyzddTm/6KLSnLh7AUDJPxcUTrKabV
+
+  curl -s -G -H "Circle-Token: $TOKEN" "$API/project/$PROJECT/pipeline" \
+    --data-urlencode "branch=$(git branch --show-current)" \
+    | jq -r '.items[].id' \
+    | while read -r pipeline; do
+        curl -s -H "Circle-Token: $TOKEN" "$API/pipeline/$pipeline/workflow" \
+          | jq -r '.items[] | select(.status == "running" or .status == "failing" or .status == "on_hold") | .id'
+      done \
+    | while read -r workflow; do
+        echo "cancelling $workflow"
+        curl -s -X POST -H "Circle-Token: $TOKEN" "$API/workflow/$workflow/cancel"
+        echo
+      done
+}
+
 [ -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 # Add completions
