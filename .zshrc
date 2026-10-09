@@ -90,6 +90,7 @@ alias start-shell-container=$HOME/development/shell-container/start.sh
 alias stop-shell-container=$HOME/development/shell-container/stop.sh
 alias enter-shell-container=$HOME/development/shell-container/enter.sh
 alias gitpush="git push origin && git push gitlab && git push bitbucket"
+alias cci-run='circleci pipeline run UMgunUQXZbagsQGQyzddTm 6KLSnLh7AUDJPxcUTrKabV --pipeline-definition-id 34b63115-88ae-486d-8830-f7bca7c9ee7d --config-branch "$(git branch --show-current)" --checkout-branch "$(git branch --show-current)"'
 
 get-ip-address() {
   if command -v ip >/dev/null 2>&1; then
