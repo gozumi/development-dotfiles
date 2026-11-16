@@ -129,6 +129,83 @@ cci-cancel-all() {
       done
 }
 
+# Check recent CircleCI pipelines (with workflow status) for a branch (defaults to current git branch)
+cci-pipelines() {
+  local org_id project_id branch token_file="$HOME/.circleci/cli.yml"
+
+  if [[ ! -f "$token_file" ]]; then
+    echo "No CircleCI token found at $token_file" >&2
+    return 1
+  fi
+  local token
+  token=$(awk '/^token:/ {print $2}' "$token_file")
+
+  local vcs_url
+  vcs_url=$(curl -s -H "Circle-Token: $token" \
+    "https://circleci.com/api/v1.1/projects" \
+    | jq -r '.[0].vcs_url')
+  org_id=$(basename "$(dirname "$vcs_url")")
+  project_id=$(basename "$vcs_url")
+
+  branch="${1:-$(git branch --show-current)}"
+
+  curl -s -H "Circle-Token: $token" \
+    "https://circleci.com/api/v2/project/circleci/$org_id/$project_id/pipeline?branch=$(printf '%s' "$branch" | jq -sRr @uri)" \
+    | jq -r '.items[] | "\(.id)\t\(.number)\t\(.created_at)\t\(.trigger_parameters.git.commit_message // "" | split("\n")[0])"' \
+    | while IFS=$'\t' read -r pipeline_id number created_at commit_message; do
+      local workflows
+      workflows=$(curl -s -H "Circle-Token: $token" \
+        "https://circleci.com/api/v2/pipeline/$pipeline_id/workflow" \
+        | jq -r '[.items[] | "\(.name):\(.status)" + (if .canceled_by and .status != "canceled" then " (cancel pending)" else "" end)] | join(", ")')
+      [[ -z "$workflows" ]] && workflows="(no workflows)"
+      if (( ${#commit_message} > 60 )); then
+        commit_message="${commit_message[1,60]}..."
+      fi
+      echo "$number\t$workflows\t$created_at\t$commit_message"
+    done
+}
+
+cci-cancel() {
+  local pipeline_number="$1" org_id project_id token_file="$HOME/.circleci/cli.yml"
+
+  if [[ -z "$pipeline_number" ]]; then
+    echo "Usage: cci-cancel <pipeline-number>" >&2
+    return 1
+  fi
+  if [[ ! -f "$token_file" ]]; then
+    echo "No CircleCI token found at $token_file" >&2
+    return 1
+  fi
+  local token
+  token=$(awk '/^token:/ {print $2}' "$token_file")
+
+  local vcs_url
+  vcs_url=$(curl -s -H "Circle-Token: $token" \
+    "https://circleci.com/api/v1.1/projects" \
+    | jq -r '.[0].vcs_url')
+  org_id=$(basename "$(dirname "$vcs_url")")
+  project_id=$(basename "$vcs_url")
+
+  local pipeline_id
+  pipeline_id=$(curl -s -H "Circle-Token: $token" \
+    "https://circleci.com/api/v2/project/circleci/$org_id/$project_id/pipeline/$pipeline_number" \
+    | jq -r '.id')
+
+  if [[ -z "$pipeline_id" || "$pipeline_id" == "null" ]]; then
+    echo "Could not resolve pipeline $pipeline_number" >&2
+    return 1
+  fi
+
+  curl -s -H "Circle-Token: $token" \
+    "https://circleci.com/api/v2/pipeline/$pipeline_id/workflow" \
+    | jq -r '.items[].id' \
+    | while read -r workflow_id; do
+      echo "Cancelling workflow $workflow_id"
+      curl -s -X POST -H "Circle-Token: $token" \
+        "https://circleci.com/api/v2/workflow/$workflow_id/cancel" | jq .
+    done
+}
+
 [ -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 # Add completions
@@ -160,3 +237,6 @@ if command -v dockerd >/dev/null 2>&1 && [ "$no_systemd" = true ] && ! pgrep -x 
   sudo bash -c 'nohup dockerd >> /var/log/docker/dockerd.log 2>&1 & disown'
 fi
 unset no_systemd
+
+# bun completions
+[ -s "/home/developer/.bun/_bun" ] && source "/home/developer/.bun/_bun"
