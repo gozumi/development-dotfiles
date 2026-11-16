@@ -2,6 +2,56 @@
 
 # fpath=(~/.zsh/completion $fpath)
 
+# ---------------------------------------------------------------------------
+# Completion (zsh-autocomplete)
+#
+# zsh-autocomplete runs compinit itself (on the first prompt) and queues any
+# compdef/complete calls made before then, so:
+#   * never call compinit/bashcompinit in this file
+#   * fpath must be final before the plugin is sourced
+#   * skip_global_compinit=1 is set in ~/.zshenv to stop Ubuntu's
+#     /etc/zsh/zshrc from running compinit first
+# ---------------------------------------------------------------------------
+export PATH=$HOME/.local/bin:$HOME/.bun/bin:$HOME/.deno/bin:$PATH
+
+# Generated completion scripts live in ~/.zfunc. Each is (re)generated when
+# missing/empty or when the tool's binary is newer (i.e. after an upgrade).
+fpath=(~/.zfunc $fpath)
+[[ -d ~/.zfunc ]] || mkdir -p ~/.zfunc
+_zfunc_generate() {  # usage: _zfunc_generate <name> <command> [args...]
+  local file=~/.zfunc/_$1 bin=${commands[$2]}; shift
+  [[ -n $bin ]] || return 0
+  [[ -s $file && $file -nt $bin ]] && return 0
+  "$@" >| $file.tmp 2>/dev/null && [[ -s $file.tmp ]] && mv -f $file.tmp $file
+  rm -f $file.tmp
+}
+_zfunc_generate rustup rustup completions zsh
+_zfunc_generate cargo  rustup completions zsh cargo
+_zfunc_generate bun    bun completions zsh
+_zfunc_generate deno   deno completions zsh
+unfunction _zfunc_generate
+
+[[ -f ~/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ]] &&
+  source ~/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+
+# Tab / Shift-Tab open the completion menu instead of inserting the first item
+bindkey              '^I' menu-select
+bindkey "$terminfo[kcbt]" menu-select
+
+# zsh-autocomplete lists directories before everything else; put
+# package.json scripts first for `bun run`.
+zstyle ':completion:*:*:bun:*' group-order scripts bin directories files
+
+# nvm only ships a bash completion script, and it runs compinit itself unless
+# compinit is already defined. Declare (don't run) compinit so it is left to
+# zsh-autocomplete; nvm's `complete` call is then queued by the plugin.
+export NVM_DIR=${NVM_DIR:-$HOME/.nvm}
+autoload -Uz compinit
+for _nvm_comp in $NVM_DIR/bash_completion /opt/homebrew/opt/nvm/etc/bash_completion.d/nvm; do
+  [[ -s $_nvm_comp ]] && { source $_nvm_comp; break }
+done
+unset _nvm_comp
+
 # Set up the prompt
 
 setopt autocd
@@ -45,19 +95,6 @@ HISTSIZE=1000
 SAVEHIST=1000
 HISTFILE=~/.zsh_history
 
-# Add update fpath
-fpath+=~/.zfunc
-
-# Use modern completion system
-autoload -Uz compinit
-compinit
-
-zstyle ':completion:*' auto-description 'specify: %d'
-zstyle ':completion:*' completer _expand _complete _correct _approximate
-zstyle ':completion:*' format 'Completing %d'
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*' menu select=2
-
 if whence dircolors >/dev/null; then
   eval "$(dircolors -b)"
   zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
@@ -66,21 +103,12 @@ else
   zstyle ':completion:*:default' list-colors ''
 fi
 
-zstyle ':completion:*' list-colors ''
-zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
-zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
-zstyle ':completion:*' menu select=long
-zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
-zstyle ':completion:*' use-compctl false
-zstyle ':completion:*' verbose true
-
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
 export TZ=Europe/London
 # export LANG=en_GB.UTF-8
 # export LANGUAGE=en_GB
-export PATH=$HOME/.local/bin:$HOME/.bun/bin:$HOME/.deno/bin:$PATH
 export DISPLAY=host.docker.internal:0 
 
 alias bat=batcat
@@ -206,20 +234,9 @@ cci-cancel() {
     done
 }
 
-[ -f $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh ] &&  source $HOME/packages/zsh-autocomplete/zsh-autocomplete.plugin.zsh
-
-# Add completions
-[ ! -d $HOME/.zfunc ] && mkdir $HOME/.zfunc 
-[ ! -f $HOME/.zfunc/_rustup ] && rustup completions zsh > $HOME/.zfunc/_rustup 
-[ ! -f $HOME/.zfunc/_cargo ] && rustup completions zsh cargo > $HOME/.zfunc/_cargo
-[ ! -f $HOME/.zfunc/_bun ] && bun completions zsh > $HOME/.zfunc/_bun
-[ ! -f $HOME/.zfunc/_deno ] && deno completions zsh > $HOME/.zfunc/_deno
-
 # Load nvm on macOS with Homebrew
 export NVM_DIR="$HOME/.nvm"
 [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-autoload -U +X bashcompinit && bashcompinit
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" 
 
 # Maintain a stable nvm "current" symlink so tools (e.g. SonarLint) can point at it
 export NVM_SYMLINK_CURRENT=true
@@ -237,6 +254,3 @@ if command -v dockerd >/dev/null 2>&1 && [ "$no_systemd" = true ] && ! pgrep -x 
   sudo bash -c 'nohup dockerd >> /var/log/docker/dockerd.log 2>&1 & disown'
 fi
 unset no_systemd
-
-# bun completions
-[ -s "/home/developer/.bun/_bun" ] && source "/home/developer/.bun/_bun"
